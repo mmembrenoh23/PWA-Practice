@@ -35,7 +35,16 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-    return e.respondWith(fetch(e.request)
+    e.respondWith(
+        caches.match(e.request).then((res) => {
+            if (res) {
+                return res;
+            }
+
+            return fetch(e.request);
+        })
+    );
+   /* return e.respondWith(fetch(e.request)
             .then(res => { return res; })
             .catch(() => { 
             //If there is an error, simply return offline page
@@ -43,7 +52,7 @@ self.addEventListener("fetch", (e) => {
                 console.log('match found in cache for offline.html');
                 return caches.match('offline.html');
               }
-        }));
+        }));*/
     /*e.respondWith(async function() {
         const cacheResponse = await caches.match(e.request);
 
